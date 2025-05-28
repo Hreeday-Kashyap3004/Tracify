@@ -1,0 +1,32 @@
+# .htaccess
+
+# Disable directory listing
+Options -Indexes
+
+# Prevent direct access to includes directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^includes/ - [F,L]
+</IfModule>
+
+# Prevent access to the uploads directory (listing and direct execution)
+# This assumes your uploads are served directly. Better security stores them outside web root.
+<Directory /path/to/your/htdocs/lost_and_found/uploads>
+    # Prevent script execution (adjust based on server config)
+    <FilesMatch "\.(php|php[3-7]|phtml)$">
+        Order Deny,Allow
+        Deny from all
+    </FilesMatch>
+    # Optionally disable listing again here if needed
+    Options -Indexes
+</Directory>
+
+# General PHP Settings (optional)
+<IfModule mod_php7.c> # Adjust module name if using different PHP version
+    php_flag display_errors Off  # Turn off error display for production
+    php_value error_log /path/to/your/php_errors.log # Set path for error log
+</IfModule>
+
+# File Upload Limits (adjust as needed)
+php_value upload_max_filesize 5M
+php_value post_max_size 6M
